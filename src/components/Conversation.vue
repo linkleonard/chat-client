@@ -13,21 +13,18 @@
     </nav>
     <section>
       <ul>
-        <li
-          :class="classNames({
-            'is-session-user': message.user === session.user,
-          })"
+        <user-message
           v-for="message in messages[$route.params.id]" :key="message.id"
-        >
-          <img :src="users[message.user].picture" />
-          <span>{{message.text}}</span>
-        </li>
-        <li class="system" v-if="$route.params.id && hasMessages">
-          <span>No messages! Send one now.</span>
-        </li>
-        <li class="system" v-if="!$route.params.id">
-          <span>Select a conversation.</span>
-        </li>
+          :message="message"
+          :users="users"
+          :session="session"
+        />
+        <system-message v-if="$route.params.id && hasMessages">
+          No messages! Send one now.
+        </system-message>
+        <system-message v-if="!$route.params.id">
+          Select a conversation.
+        </system-message>
       </ul>
       <form v-if="$route.params.id" v-on:submit.prevent>
         <textarea rows=3 />
@@ -41,6 +38,8 @@
 import classNames from 'classnames';
 import corgi from '@/assets/corgi.jpg';
 import shiba from '@/assets/shiba.jpg';
+import SystemMessage from '@/components/SystemMessage';
+import UserMessage from '@/components/UserMessage';
 
 export default {
   name: 'Conversation',
@@ -51,6 +50,10 @@ export default {
         !this.messages[this.$route.params.id].length
       );
     },
+  },
+  components: {
+    'system-message': SystemMessage,
+    'user-message': UserMessage,
   },
   methods: {
     classNames,
@@ -132,42 +135,6 @@ section ul {
   flex-flow: column;
   justify-content: flex-end;
   padding: 10px 0;
-}
-
-section li {
-  display: flex;
-  align-items: flex-start;
-}
-
-section li img {
-  margin: 10px;
-  border-radius: 50%;
-  height: 50px;
-  width: 50px;
-  border: 4px solid #cfcfcf;
-}
-
-section li.is-session-user img {
-  border: 4px solid #afafef;
-}
-
-section li span {
-  display: block;
-  padding: 20px;
-  border-radius: 20px;
-  margin: 10px 20px;
-  border: 1px solid #cfcfcf;
-}
-
-section li.is-session-user span {
-  border: 1px solid #afafef;
-}
-
-section li.system span {
-  flex: 1 0 auto;
-  background: #9f9f9f;
-  border: none;
-  color: #fafafa;
 }
 
 section form {
